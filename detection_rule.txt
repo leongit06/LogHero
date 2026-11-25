@@ -1,0 +1,39 @@
+
+
+title: Web Application Scanning and Attack Attempts
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: experimental
+description: Detects web application scanning tools and common attack patterns such as path traversal and sensitive file access.
+author: Detection Engineer
+date: 2026/07/25
+logsource:
+    category: webserver
+    product: webserver
+detection:
+    selection_scanner:
+        UserAgent|contains:
+            - 'sqlmap'
+            - 'nikto'
+            - 'masscan'
+            - 'dirbuster'
+            - 'gobuster'
+            - 'wfuzz'
+            - 'burp'
+    selection_attack:
+        URI|contains:
+            - '/../'
+            - '/etc/passwd'
+            - '/.env'
+            - '/phpmyadmin'
+            - '/wp-login'
+            - '/xmlrpc.php'
+            - '/admin/config'
+    condition: selection_scanner or selection_attack
+fields:
+    - ClientIP
+    - URI
+    - UserAgent
+    - ResponseCode
+falsepositives:
+    - Legitimate administrative access
+level: high
